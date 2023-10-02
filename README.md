@@ -23,11 +23,11 @@ AWS also offers a similar dashboard in the AWS console, and such data is availab
 
 ## Further improvement ideas (contributions welcome)
 
-- Add support for more resources included in the ENI list. (e.g. ECS, APIGW, etc.)
+- Add support for more resources included in the ENI list. (e.g. ECS, APIGW, etc.), see [here](https://kloudle.com/academy/how-to-get-all-public-ip-addresses-in-your-aws-account/) for more details.
 - Add support for additional resources not included in the ENI list. (e.g. VPN endpoints, etc.)
 - Properly integrate the subnets view currently available when running with --subnets.
 - Add support to dump data as CSV, JSON, YAML, XLSX, and whatever other file types may make sense.
-- Add some nice anonymized screenshots to the Readme file.
+- Add some nice anonymized screenshots to the Readme file. (DONE)
 
 ## Prerequisites
 
