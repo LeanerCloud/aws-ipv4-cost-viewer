@@ -39,6 +39,13 @@ AWS also offers a similar dashboard in the AWS console, and such data is availab
 ```bash
 go install github.com/leanercloud/aws-ipv4-cost-viewer@latest
 ```
+### OR
+
+```bash
+git clone https://github.com/LeanerCloud/aws-ipv4-cost-viewer
+go run .
+```
+
 
 ## Usage
 
