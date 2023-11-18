@@ -33,6 +33,9 @@ AWS also offers a similar dashboard in the AWS console, and such data is availab
 
 - Go (1.16 or later)
 - AWS CLI credentials set in the shell environment, for a user/role configured with appropriate permissions.
+-export AWS_ACCESS_KEY_ID=""
+-export AWS_SECRET_ACCESS_KEY=""
+-export AWS_SESSION_TOKEN=""
 
 ## Installation
 
@@ -47,6 +50,15 @@ After installation, you can run the tool with:
 ```bash
 aws-ipv4-costs-viewer
 ```
+
+## Export to csv
+
+```bash
+go run . --export-csv
+```
+This will  create ec2_instances.csv
+
+
 
 Navigate through the UI using the arrow keys. Press `ESC` to exit.
 
