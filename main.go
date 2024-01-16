@@ -14,7 +14,7 @@
  * along with this program. If not, see <https://opensource.org/licenses/OSL-3.0>.
  */
 
-package main
+ package main
 
 import (
 	"context"
@@ -54,3 +54,7 @@ func fetchRegions(client *ec2.Client) ([]types.Region, error) {
 	}
 	return regions.Regions, nil
 }
+
+
+
+
