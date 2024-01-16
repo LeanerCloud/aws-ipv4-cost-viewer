@@ -78,9 +78,11 @@ func countIPsFromDNS(dnsName string) []string {
 	return ipStrings
 }
 
-func fetchProcessedBytes(lbIdentifier string, lbType string, cfg aws.Config) int {
+func fetchProcessedBytes(lbIdentifier string, lbType string, cfg aws.Config, region string) int {
 	// Create a CloudWatch client
-	cwClient := cloudwatch.NewFromConfig(cfg)
+	cwClient := cloudwatch.NewFromConfig(cfg, func(o *cloudwatch.Options) {
+		o.Region = region
+	})
 
 	// Determine the namespace and dimension based on the load balancer type
 	var namespace, dimensionName string
@@ -160,19 +162,19 @@ func fetchAllLoadBalancers(cfg aws.Config, regions []types.Region) ([]LoadBalanc
 		go func(region types.Region) {
 			defer wg.Done()
 
-			regionalClient := elbv2.NewFromConfig(cfg, func(o *elbv2.Options) {
+			regionalELBClient := elbv2.NewFromConfig(cfg, func(o *elbv2.Options) {
 				o.Region = *region.RegionName
 			})
-			regionalClassicClient := elb.NewFromConfig(cfg, func(o *elb.Options) {
+			regionalClassicELBClient := elb.NewFromConfig(cfg, func(o *elb.Options) {
 				o.Region = *region.RegionName
 			})
 
-			lbs, err := fetchLoadBalancers(regionalClient)
+			lbs, err := fetchLoadBalancers(regionalELBClient)
 			if err != nil {
 				errCh <- fmt.Errorf("failed to fetch LoadBalancers in region %s: %v", *region.RegionName, err)
 				return
 			}
-			classicLbs, err := fetchClassicLoadBalancers(regionalClassicClient)
+			classicLbs, err := fetchClassicLoadBalancers(regionalClassicELBClient)
 			if err != nil {
 				errCh <- fmt.Errorf("failed to fetch Classic LoadBalancers in region %s: %v", *region.RegionName, err)
 				return
@@ -200,7 +202,7 @@ func fetchAllLoadBalancers(cfg aws.Config, regions []types.Region) ([]LoadBalanc
 						Type:            string(lb.Type),
 						DNSName:         *lb.DNSName,
 						IPCount:         len(ips),
-						TrafficLastWeek: fetchProcessedBytes(lbIdentifier, string(lb.Type), cfg),
+						TrafficLastWeek: fetchProcessedBytes(lbIdentifier, string(lb.Type), cfg, *region.RegionName),
 						PublicIPs:       ips,
 						Cost:            3.65 * float64(len(ips)),
 					}
@@ -217,7 +219,7 @@ func fetchAllLoadBalancers(cfg aws.Config, regions []types.Region) ([]LoadBalanc
 						Type:            "classic",
 						DNSName:         *lb.DNSName,
 						IPCount:         len(ips),
-						TrafficLastWeek: fetchProcessedBytes(*lb.LoadBalancerName, "classic", cfg),
+						TrafficLastWeek: fetchProcessedBytes(*lb.LoadBalancerName, "classic", cfg, *region.RegionName),
 						PublicIPs:       ips,
 						Cost:            3.65 * float64(len(ips)),
 					}
